@@ -2,13 +2,13 @@ disabled = false
 locale = "en"
 label = "English"
 weight = 1
-title = "Lange Lab"
+title = "LANGE LAB"
 
 [params]
   displayName = "EN"
   isoCode = "en"
   rtl = false
-  dateFormat = "2 January 2006"
+  dateFormat = "January 2, 2006"
   logo = "img/Lab_logo_ry.png"
   # secondaryLogo = "img/secondary-logo.png"
   # description = "My awesome website"
