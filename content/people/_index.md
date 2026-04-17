@@ -8,6 +8,10 @@ showDate = false
 showReadingTime = false
 showSummary = true
 cardView = false
+[cascade]
+	showDate = false
+	showWordCount = false
+	showReadingTime = false
 +++
 
 ## Current Members

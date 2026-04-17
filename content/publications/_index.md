@@ -7,7 +7,10 @@ showAuthor = false
 showDate = false
 showReadingTime = false
 showSummary = true
-groupByYear = true
+[cascade]
+	showDate = false
+	showWordCount = false
+	showReadingTime = false
 +++
 
 Publications are maintained here.
