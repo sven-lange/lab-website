@@ -83,12 +83,3 @@
 # the copyright notice. Configure as per the main menu above.
 
 
-[[footer]]
-	name = "Contact"
-	pageRef = "contact"
-	weight = 10
-
-[[footer]]
-	name = "Open Positions"
-	pageRef = "positions"
-	weight = 20

@@ -1,0 +1,20 @@
+/* Header logo size */
+.main-menu .logo {
+  max-width: 6.5rem !important;
+  max-height: 6.5rem !important;
+}
+
+/* Top navigation font size (desktop + mobile menu) */
+.main-menu nav a > span,
+.main-menu > a {
+  font-size: 1.15rem !important;
+  line-height: 1.3;
+}
+
+/* Slightly larger menu text on wide screens */
+@media (min-width: 1024px) {
+  .main-menu nav a > span,
+  .main-menu > a {
+    font-size: 1.2rem !important;
+  }
+}
