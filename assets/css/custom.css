@@ -40,6 +40,31 @@
   transition: opacity 0.6s ease, visibility 0.6s ease;
 }
 
+.home-intro-fallback {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.home-intro-fallback.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+#home-background-video.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.home-mobile-video {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.home-mobile-video.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
 .home-intro-overlay.is-hidden {
   opacity: 0;
   visibility: hidden;
@@ -51,16 +76,25 @@ body.home-intro-complete .main-menu {
   transition: opacity 0.45s ease, transform 0.45s ease;
 }
 
-body.home-intro-active .main-menu {
-  opacity: 0;
-  transform: translateY(-1rem);
-  pointer-events: none;
-}
-
+body.home-intro-active .main-menu,
 body.home-intro-complete .main-menu {
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
+}
+
+@media (min-width: 768px) {
+  body.home-intro-active .main-menu {
+    opacity: 0;
+    transform: translateY(-1rem);
+    pointer-events: none;
+  }
+
+  body.home-intro-complete .main-menu {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

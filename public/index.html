@@ -109,8 +109,8 @@
   <link
     type="text/css"
     rel="stylesheet"
-    href="/lab/css/main.bundle.min.a37550f931f6f35adec727518291eb598febd4eef04714855adaa0ac1b7f5d161435e86c6b8ec1f27666af320b1c485b3e2ff21e6979e66f6dd8e3873667bbb9.css"
-    integrity="sha512-o3VQ&#43;TH281rexydRgpHrWY/r1O7wRxSFWtqgrBt/XRYUNehsa47B8nZmrzILHEhbPi/yHml55m9t2OOHNme7uQ==">
+    href="/lab/css/main.bundle.min.7ee66eb3d308e6ba20e340f1b7ee487120ee24413857b7ea17ef7653ff728b8a31ad0d794edb3d31291394f49240d2aaa55da937767ef5063ffdffdb2c35cc61.css"
+    integrity="sha512-fuZus9MI5rog40Dxt&#43;5IcSDuJEE4V7fqF&#43;92U/9yi4oxrQ15Tts9MSkTlPSSQNKqpV2pN3Z&#43;9QY//f/bLDXMYQ==">
 
   
   
@@ -688,11 +688,23 @@
           
           
           
+          
+          
             
               
               
             
           
+          
+          
+            
+              
+            
+          
+          
+            
+              
+            
           
           
             
@@ -719,6 +731,30 @@
             </video>
           
           
+            <video
+              id="home-mobile-video-light"
+              class="nozoom home-mobile-video fixed inset-0 h-screen w-full object-cover"
+              autoplay
+              muted
+              playsinline
+              preload="auto"
+              aria-hidden="true">
+              <source src="/lab/img/animations/0001-0250-mobile-light.mp4" type="video/mp4">
+            </video>
+          
+          
+            <video
+              id="home-mobile-video-dark"
+              class="nozoom home-mobile-video fixed inset-0 h-screen w-full object-cover"
+              autoplay
+              muted
+              playsinline
+              preload="auto"
+              aria-hidden="true">
+              <source src="/lab/img/animations/0001-0250-mobile-dark.mp4" type="video/mp4">
+            </video>
+          
+          
         </div>
 
         
@@ -728,6 +764,12 @@
             aria-hidden="true"
             data-threshold="64"
             data-reveal-menu="true">
+            
+              <img
+                id="home-intro-fallback"
+                class="home-intro-fallback h-full w-full object-cover"
+                src="/lab/img/animations/home-intro-fallback.png"
+                alt="">
             
           </div>
         
@@ -780,11 +822,64 @@
     (function () {
       var overlay = document.getElementById("home-intro-overlay");
       var backgroundVideo = document.getElementById("home-background-video");
+      var mobileVideoLight = document.getElementById("home-mobile-video-light");
+      var mobileVideoDark = document.getElementById("home-mobile-video-dark");
+      var fallbackImage = document.getElementById("home-intro-fallback");
+      var mobileMenuToggle = document.getElementById("mobile-menu-toggle");
       var threshold = parseInt((overlay && overlay.dataset.threshold) || "64", 10);
       var revealMenu = ((overlay && overlay.dataset.revealMenu) || "true") === "true";
       var loopAfterIntro = ((backgroundVideo && backgroundVideo.dataset.loopAfterIntro) || "true") === "true";
       var completed = false;
       var completionTimer = null;
+      var usingMobileVideoMode = false;
+
+      function activeMobileVideo() {
+        var isDark = document.documentElement.classList.contains("dark");
+        if (isDark && mobileVideoDark) return mobileVideoDark;
+        if (!isDark && mobileVideoLight) return mobileVideoLight;
+        return mobileVideoDark || mobileVideoLight;
+      }
+
+      function hideVideo(video) {
+        if (!video) return;
+        video.pause();
+        video.classList.remove("is-visible");
+      }
+
+      function showVideo(video) {
+        if (!video) return;
+        video.classList.add("is-visible");
+        var playPromise = video.play();
+        if (playPromise && typeof playPromise.catch === "function") {
+          playPromise.catch(function () {});
+        }
+      }
+
+      function shouldUseMobileVideoMode() {
+        var ua = navigator.userAgent || "";
+        var isiOS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+        return isiOS;
+      }
+
+      function activateMobileVideoMode() {
+        usingMobileVideoMode = true;
+        document.body.classList.add("home-mobile-video-mode");
+        if (backgroundVideo) {
+          backgroundVideo.classList.add("is-hidden");
+          backgroundVideo.pause();
+        }
+        hideVideo(mobileVideoLight);
+        hideVideo(mobileVideoDark);
+
+        var mobileVideo = activeMobileVideo();
+        if (mobileVideo) {
+          mobileVideo.loop = false;
+          mobileVideo.addEventListener("ended", onVideoEnded);
+          showVideo(mobileVideo);
+        } else if (fallbackImage) {
+          fallbackImage.classList.add("is-visible");
+        }
+      }
 
       function clearListeners() {
         window.removeEventListener("scroll", onScroll);
@@ -793,6 +888,19 @@
         if (backgroundVideo) {
           backgroundVideo.removeEventListener("ended", onVideoEnded);
         }
+        if (mobileVideoLight) {
+          mobileVideoLight.removeEventListener("ended", onVideoEnded);
+        }
+        if (mobileVideoDark) {
+          mobileVideoDark.removeEventListener("ended", onVideoEnded);
+        }
+        if (mobileMenuToggle) {
+          mobileMenuToggle.removeEventListener("change", onMobileMenuToggle);
+        }
+      }
+
+      function onMobileMenuToggle() {
+        completeIntro();
       }
 
       function completeIntro() {
@@ -807,7 +915,18 @@
           window.clearTimeout(completionTimer);
         }
 
-        if (backgroundVideo) {
+        if (usingMobileVideoMode) {
+          hideVideo(mobileVideoLight);
+          hideVideo(mobileVideoDark);
+          var mobileVideo = activeMobileVideo();
+          if (mobileVideo) {
+            mobileVideo.loop = loopAfterIntro;
+            if (mobileVideo.ended) {
+              mobileVideo.currentTime = 0;
+            }
+            showVideo(mobileVideo);
+          }
+        } else if (backgroundVideo) {
           backgroundVideo.loop = loopAfterIntro;
           if (backgroundVideo.ended) {
             backgroundVideo.currentTime = 0;
@@ -854,7 +973,9 @@
         return;
       }
 
-      if (backgroundVideo) {
+      if (shouldUseMobileVideoMode()) {
+        activateMobileVideoMode();
+      } else if (backgroundVideo) {
         backgroundVideo.loop = false;
         backgroundVideo.addEventListener("ended", onVideoEnded);
       }
@@ -862,6 +983,9 @@
       window.addEventListener("scroll", onScroll, { passive: true });
       window.addEventListener("wheel", onWheel, { passive: true });
       window.addEventListener("touchmove", onTouchMove, { passive: true });
+      if (mobileMenuToggle) {
+        mobileMenuToggle.addEventListener("change", onMobileMenuToggle);
+      }
       onScroll();
 
       completionTimer = window.setTimeout(function () {

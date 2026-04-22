@@ -9,6 +9,8 @@
           {{ $homepageImage := "" }}
           {{ $heroBannerImage := "" }}
           {{ $introAnimationVideo := "" }}
+          {{ $introAnimationMobileLightVideo := "" }}
+          {{ $introAnimationMobileDarkVideo := "" }}
           {{ $introAnimationFallbackImage := "" }}
           {{ with .Site.Params.defaultBackgroundImage }}
             {{ if or (strings.HasPrefix . "http:") (strings.HasPrefix . "https:") }}
@@ -40,6 +42,20 @@
               {{ $introAnimationVideo = resources.Get . }}
             {{ end }}
           {{ end }}
+          {{ with .Site.Params.homepage.introAnimationMobileLightVideo }}
+            {{ if or (strings.HasPrefix . "http:") (strings.HasPrefix . "https:") }}
+              {{ $introAnimationMobileLightVideo = resources.GetRemote . }}
+            {{ else }}
+              {{ $introAnimationMobileLightVideo = resources.Get . }}
+            {{ end }}
+          {{ end }}
+          {{ with .Site.Params.homepage.introAnimationMobileDarkVideo }}
+            {{ if or (strings.HasPrefix . "http:") (strings.HasPrefix . "https:") }}
+              {{ $introAnimationMobileDarkVideo = resources.GetRemote . }}
+            {{ else }}
+              {{ $introAnimationMobileDarkVideo = resources.Get . }}
+            {{ end }}
+          {{ end }}
           {{ with .Site.Params.homepage.introAnimationFallbackImage }}
             {{ if or (strings.HasPrefix . "http:") (strings.HasPrefix . "https:") }}
               {{ $introAnimationFallbackImage = resources.GetRemote . }}
@@ -59,6 +75,30 @@
               aria-hidden="true"
               data-loop-after-intro="{{ .Site.Params.homepage.introAnimationLoop | default true }}">
               <source src="{{ $introAnimationVideo.RelPermalink }}" type="video/webm">
+            </video>
+          {{ end }}
+          {{ if $introAnimationMobileLightVideo }}
+            <video
+              id="home-mobile-video-light"
+              class="nozoom home-mobile-video fixed inset-0 h-screen w-full object-cover"
+              {{ if .Site.Params.homepage.introAnimationAutoplay | default true }}autoplay{{ end }}
+              {{ if .Site.Params.homepage.introAnimationMuted | default true }}muted{{ end }}
+              {{ if .Site.Params.homepage.introAnimationPlaysInline | default true }}playsinline{{ end }}
+              preload="auto"
+              aria-hidden="true">
+              <source src="{{ $introAnimationMobileLightVideo.RelPermalink }}" type="video/mp4">
+            </video>
+          {{ end }}
+          {{ if $introAnimationMobileDarkVideo }}
+            <video
+              id="home-mobile-video-dark"
+              class="nozoom home-mobile-video fixed inset-0 h-screen w-full object-cover"
+              {{ if .Site.Params.homepage.introAnimationAutoplay | default true }}autoplay{{ end }}
+              {{ if .Site.Params.homepage.introAnimationMuted | default true }}muted{{ end }}
+              {{ if .Site.Params.homepage.introAnimationPlaysInline | default true }}playsinline{{ end }}
+              preload="auto"
+              aria-hidden="true">
+              <source src="{{ $introAnimationMobileDarkVideo.RelPermalink }}" type="video/mp4">
             </video>
           {{ end }}
           {{ if and $homepageImage (not $introAnimationVideo) }}
@@ -85,8 +125,12 @@
             aria-hidden="true"
             data-threshold="{{ .Site.Params.homepage.introAnimationScrollThreshold | default 64 }}"
             data-reveal-menu="{{ .Site.Params.homepage.menuRevealOnScroll | default true }}">
-            {{ if and (not $introAnimationVideo) $introAnimationFallbackImage }}
-              <img class="h-full w-full object-cover" src="{{ $introAnimationFallbackImage.RelPermalink }}" alt="">
+            {{ if $introAnimationFallbackImage }}
+              <img
+                id="home-intro-fallback"
+                class="home-intro-fallback h-full w-full object-cover"
+                src="{{ $introAnimationFallbackImage.RelPermalink }}"
+                alt="">
             {{ end }}
           </div>
         {{ end }}
@@ -133,11 +177,64 @@
     (function () {
       var overlay = document.getElementById("home-intro-overlay");
       var backgroundVideo = document.getElementById("home-background-video");
+      var mobileVideoLight = document.getElementById("home-mobile-video-light");
+      var mobileVideoDark = document.getElementById("home-mobile-video-dark");
+      var fallbackImage = document.getElementById("home-intro-fallback");
+      var mobileMenuToggle = document.getElementById("mobile-menu-toggle");
       var threshold = parseInt((overlay && overlay.dataset.threshold) || "64", 10);
       var revealMenu = ((overlay && overlay.dataset.revealMenu) || "true") === "true";
       var loopAfterIntro = ((backgroundVideo && backgroundVideo.dataset.loopAfterIntro) || "true") === "true";
       var completed = false;
       var completionTimer = null;
+      var usingMobileVideoMode = false;
+
+      function activeMobileVideo() {
+        var isDark = document.documentElement.classList.contains("dark");
+        if (isDark && mobileVideoDark) return mobileVideoDark;
+        if (!isDark && mobileVideoLight) return mobileVideoLight;
+        return mobileVideoDark || mobileVideoLight;
+      }
+
+      function hideVideo(video) {
+        if (!video) return;
+        video.pause();
+        video.classList.remove("is-visible");
+      }
+
+      function showVideo(video) {
+        if (!video) return;
+        video.classList.add("is-visible");
+        var playPromise = video.play();
+        if (playPromise && typeof playPromise.catch === "function") {
+          playPromise.catch(function () {});
+        }
+      }
+
+      function shouldUseMobileVideoMode() {
+        var ua = navigator.userAgent || "";
+        var isiOS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+        return isiOS;
+      }
+
+      function activateMobileVideoMode() {
+        usingMobileVideoMode = true;
+        document.body.classList.add("home-mobile-video-mode");
+        if (backgroundVideo) {
+          backgroundVideo.classList.add("is-hidden");
+          backgroundVideo.pause();
+        }
+        hideVideo(mobileVideoLight);
+        hideVideo(mobileVideoDark);
+
+        var mobileVideo = activeMobileVideo();
+        if (mobileVideo) {
+          mobileVideo.loop = false;
+          mobileVideo.addEventListener("ended", onVideoEnded);
+          showVideo(mobileVideo);
+        } else if (fallbackImage) {
+          fallbackImage.classList.add("is-visible");
+        }
+      }
 
       function clearListeners() {
         window.removeEventListener("scroll", onScroll);
@@ -146,6 +243,19 @@
         if (backgroundVideo) {
           backgroundVideo.removeEventListener("ended", onVideoEnded);
         }
+        if (mobileVideoLight) {
+          mobileVideoLight.removeEventListener("ended", onVideoEnded);
+        }
+        if (mobileVideoDark) {
+          mobileVideoDark.removeEventListener("ended", onVideoEnded);
+        }
+        if (mobileMenuToggle) {
+          mobileMenuToggle.removeEventListener("change", onMobileMenuToggle);
+        }
+      }
+
+      function onMobileMenuToggle() {
+        completeIntro();
       }
 
       function completeIntro() {
@@ -160,7 +270,18 @@
           window.clearTimeout(completionTimer);
         }
 
-        if (backgroundVideo) {
+        if (usingMobileVideoMode) {
+          hideVideo(mobileVideoLight);
+          hideVideo(mobileVideoDark);
+          var mobileVideo = activeMobileVideo();
+          if (mobileVideo) {
+            mobileVideo.loop = loopAfterIntro;
+            if (mobileVideo.ended) {
+              mobileVideo.currentTime = 0;
+            }
+            showVideo(mobileVideo);
+          }
+        } else if (backgroundVideo) {
           backgroundVideo.loop = loopAfterIntro;
           if (backgroundVideo.ended) {
             backgroundVideo.currentTime = 0;
@@ -207,7 +328,9 @@
         return;
       }
 
-      if (backgroundVideo) {
+      if (shouldUseMobileVideoMode()) {
+        activateMobileVideoMode();
+      } else if (backgroundVideo) {
         backgroundVideo.loop = false;
         backgroundVideo.addEventListener("ended", onVideoEnded);
       }
@@ -215,6 +338,9 @@
       window.addEventListener("scroll", onScroll, { passive: true });
       window.addEventListener("wheel", onWheel, { passive: true });
       window.addEventListener("touchmove", onTouchMove, { passive: true });
+      if (mobileMenuToggle) {
+        mobileMenuToggle.addEventListener("change", onMobileMenuToggle);
+      }
       onScroll();
 
       completionTimer = window.setTimeout(function () {
