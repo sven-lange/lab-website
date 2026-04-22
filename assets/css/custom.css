@@ -71,8 +71,8 @@
 }
 
 .home-hero-logo {
-  width: min(52vw, 420px);
-  max-width: 78vw;
+  width: min(26vw, 210px);
+  max-width: 39vw;
   opacity: 0;
   transform: translateY(1rem);
   transition: opacity 0.8s ease, transform 0.8s ease;
@@ -90,24 +90,23 @@ body.home-intro-complete .main-menu {
   transition: opacity 0.45s ease, transform 0.45s ease;
 }
 
-body.home-intro-active .main-menu,
+body.home-intro-active .main-menu {
+  opacity: 0;
+  pointer-events: none;
+}
+
 body.home-intro-complete .main-menu {
   opacity: 1;
-  transform: translateY(0);
   pointer-events: auto;
 }
 
 @media (min-width: 768px) {
   body.home-intro-active .main-menu {
-    opacity: 0;
     transform: translateY(-1rem);
-    pointer-events: none;
   }
 
   body.home-intro-complete .main-menu {
-    opacity: 1;
     transform: translateY(0);
-    pointer-events: auto;
   }
 }
 

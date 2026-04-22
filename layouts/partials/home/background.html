@@ -1,10 +1,21 @@
 {{ $disableImageOptimization := .Site.Params.disableImageOptimization | default false }}
-{{ $homeLogo := "" }}
-{{ with .Site.Params.Logo }}
+{{ $homeLogoURL := "" }}
+{{ with .Site.Params.homepage.heroLogo }}
   {{ if or (strings.HasPrefix . "http:") (strings.HasPrefix . "https:") }}
-    {{ $homeLogo = resources.GetRemote . }}
+    {{ $homeLogoURL = . }}
   {{ else }}
-    {{ $homeLogo = resources.Get . }}
+    {{ $homeLogoURL = . | relURL }}
+  {{ end }}
+{{ else }}
+  {{ with .Site.Params.Logo }}
+    {{ if or (strings.HasPrefix . "http:") (strings.HasPrefix . "https:") }}
+      {{ $homeLogoURL = . }}
+    {{ else }}
+      {{ $homeLogo := resources.Get . }}
+      {{ if $homeLogo }}
+        {{ $homeLogoURL = $homeLogo.RelPermalink }}
+      {{ end }}
+    {{ end }}
   {{ end }}
 {{ end }}
 <article class="prose dark:prose-invert max-w-full">
@@ -150,10 +161,10 @@
               src="{{ $heroBannerImage.RelPermalink }}"
               alt="{{ .Site.Params.homepage.heroBannerAlt | default "Homepage banner" }}">
           {{ end }}
-          {{ if $homeLogo }}
+          {{ if $homeLogoURL }}
             <img
               class="home-hero-logo nozoom mb-8 h-auto w-auto object-contain"
-              src="{{ $homeLogo.RelPermalink }}"
+              src="{{ $homeLogoURL }}"
               alt="Lab logo">
           {{ end }}
           <h1 class="text-4xl md:text-6xl font-extrabold text-neutral-900 dark:text-neutral-100">
