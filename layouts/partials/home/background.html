@@ -8,7 +8,8 @@
           {{ $useDefault := true }}
           {{ $homepageImage := "" }}
           {{ $heroBannerImage := "" }}
-          {{ $heroVideo := "" }}
+          {{ $introAnimationVideo := "" }}
+          {{ $introAnimationFallbackImage := "" }}
           {{ with .Site.Params.defaultBackgroundImage }}
             {{ if or (strings.HasPrefix . "http:") (strings.HasPrefix . "https:") }}
               {{ $homepageImage = resources.GetRemote . }}
@@ -32,11 +33,18 @@
               {{ $heroBannerImage = resources.Get . }}
             {{ end }}
           {{ end }}
-          {{ with .Site.Params.homepage.heroVideo }}
+          {{ with .Site.Params.homepage.introAnimationVideo }}
             {{ if or (strings.HasPrefix . "http:") (strings.HasPrefix . "https:") }}
-              {{ $heroVideo = resources.GetRemote . }}
+              {{ $introAnimationVideo = resources.GetRemote . }}
             {{ else }}
-              {{ $heroVideo = resources.Get . }}
+              {{ $introAnimationVideo = resources.Get . }}
+            {{ end }}
+          {{ end }}
+          {{ with .Site.Params.homepage.introAnimationFallbackImage }}
+            {{ if or (strings.HasPrefix . "http:") (strings.HasPrefix . "https:") }}
+              {{ $introAnimationFallbackImage = resources.GetRemote . }}
+            {{ else }}
+              {{ $introAnimationFallbackImage = resources.Get . }}
             {{ end }}
           {{ end }}
           {{ if $homepageImage }}
@@ -56,6 +64,33 @@
           {{ end }}
         </div>
 
+        {{ if or $introAnimationVideo $introAnimationFallbackImage }}
+          <div
+            id="home-intro-overlay"
+            class="home-intro-overlay fixed inset-0 z-40 pointer-events-none"
+            aria-hidden="true"
+            data-threshold="{{ .Site.Params.homepage.introAnimationScrollThreshold | default 64 }}"
+            data-reveal-menu="{{ .Site.Params.homepage.menuRevealOnScroll | default true }}">
+            {{ if $introAnimationVideo }}
+              <video
+                class="h-full w-full object-cover"
+                {{ if .Site.Params.homepage.introAnimationAutoplay | default true }}autoplay{{ end }}
+                {{ if .Site.Params.homepage.introAnimationMuted | default true }}muted{{ end }}
+                {{ if .Site.Params.homepage.introAnimationLoop | default true }}loop{{ end }}
+                {{ if .Site.Params.homepage.introAnimationPlaysInline | default true }}playsinline{{ end }}
+                preload="auto"
+                aria-hidden="true">
+                <source src="{{ $introAnimationVideo.RelPermalink }}" type="video/webm">
+                {{ if $introAnimationFallbackImage }}
+                  <img src="{{ $introAnimationFallbackImage.RelPermalink }}" alt="">
+                {{ end }}
+              </video>
+            {{ else }}
+              <img class="h-full w-full object-cover" src="{{ $introAnimationFallbackImage.RelPermalink }}" alt="">
+            {{ end }}
+          </div>
+        {{ end }}
+
         <div class="relative h-[1000px] flex flex-col items-center justify-center px-6 py-10 text-center">
           {{ if $heroBannerImage }}
             <img
@@ -66,23 +101,6 @@
           <h1 class="text-4xl md:text-6xl font-extrabold text-neutral-900 dark:text-neutral-100">
             {{ .Title | emojify }}
           </h1>
-          {{ if $heroVideo }}
-            <div class="mt-8 w-full">
-              <div class="relative left-1/2 w-screen -translate-x-1/2">
-                <video
-                  class="block h-auto max-h-[420px] min-h-[220px] w-full object-cover"
-                  {{ if .Site.Params.homepage.heroVideoAutoplay | default true }}autoplay{{ end }}
-                  {{ if .Site.Params.homepage.heroVideoMuted | default true }}muted{{ end }}
-                  {{ if .Site.Params.homepage.heroVideoLoop | default true }}loop{{ end }}
-                  {{ if .Site.Params.homepage.heroVideoPlaysInline | default true }}playsinline{{ end }}
-                  {{ if .Site.Params.homepage.heroVideoControls | default false }}controls{{ end }}
-                  preload="metadata"
-                  aria-label="Homepage feature video">
-                  <source src="{{ $heroVideo.RelPermalink }}" type="video/mp4">
-                </video>
-              </div>
-            </div>
-          {{ end }}
         </div>
       </div>
     </div>
@@ -108,4 +126,50 @@
     data-blur-id="background-blur"
     data-image-id="background-image"
     {{ if $homepageImage }}data-image-url="{{ $homepageImage.RelPermalink }}"{{ end }}></script>
+{{ end }}
+
+{{ if or $introAnimationVideo $introAnimationFallbackImage }}
+  <script>
+    (function () {
+      var overlay = document.getElementById("home-intro-overlay");
+      var threshold = parseInt((overlay && overlay.dataset.threshold) || "64", 10);
+      var revealMenu = ((overlay && overlay.dataset.revealMenu) || "true") === "true";
+      var completed = false;
+
+      function completeIntro() {
+        if (completed) return;
+        completed = true;
+
+        if (overlay) {
+          overlay.classList.add("is-hidden");
+        }
+
+        document.body.classList.remove("home-intro-active");
+        document.body.classList.add("home-intro-complete");
+        window.removeEventListener("scroll", onScroll);
+      }
+
+      function onScroll() {
+        if (window.scrollY >= threshold) {
+          completeIntro();
+        }
+      }
+
+      if (revealMenu) {
+        document.body.classList.add("home-intro-active");
+      }
+
+      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        completeIntro();
+        return;
+      }
+
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
+
+      window.setTimeout(function () {
+        completeIntro();
+      }, 9000);
+    })();
+  </script>
 {{ end }}

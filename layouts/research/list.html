@@ -1,4 +1,29 @@
 {{ define "main" }}
+  {{ $researchBannerVideo := "" }}
+  {{ $researchBannerVideoPath := .Params.bannerVideo | default .Site.Params.research.bannerVideo }}
+  {{ with $researchBannerVideoPath }}
+    {{ if or (strings.HasPrefix . "http:") (strings.HasPrefix . "https:") }}
+      {{ $researchBannerVideo = resources.GetRemote . }}
+    {{ else }}
+      {{ $researchBannerVideo = resources.Get . }}
+    {{ end }}
+  {{ end }}
+  {{ if $researchBannerVideo }}
+    <div class="relative left-1/2 mb-8 w-screen -translate-x-1/2">
+      <video
+        class="block h-[280px] w-full object-cover md:h-[420px]"
+        {{ if .Site.Params.research.bannerVideoAutoplay | default true }}autoplay{{ end }}
+        {{ if .Site.Params.research.bannerVideoMuted | default true }}muted{{ end }}
+        {{ if .Site.Params.research.bannerVideoLoop | default true }}loop{{ end }}
+        {{ if .Site.Params.research.bannerVideoPlaysInline | default true }}playsinline{{ end }}
+        {{ if .Site.Params.research.bannerVideoControls | default false }}controls{{ end }}
+        preload="metadata"
+        aria-label="Research banner video">
+        <source src="{{ $researchBannerVideo.RelPermalink }}" type="video/mp4">
+      </video>
+    </div>
+  {{ end }}
+
   <header>
     {{ if .Params.showBreadcrumbs | default (site.Params.list.showBreadcrumbs | default false) }}
       {{ partial "breadcrumbs.html" . }}
