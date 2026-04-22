@@ -708,6 +708,29 @@
         </div>
 
         
+          <div
+            id="home-intro-overlay"
+            class="home-intro-overlay fixed inset-0 z-40 pointer-events-none"
+            aria-hidden="true"
+            data-threshold="64"
+            data-reveal-menu="true">
+            
+              <video
+                class="h-full w-full object-cover"
+                autoplay
+                muted
+                loop
+                playsinline
+                preload="auto"
+                aria-hidden="true">
+                <source src="/lab/img/animations/0001-0250-compressed.webm" type="video/webm">
+                
+                  <img src="/lab/img/animations/home-intro-fallback.png" alt="">
+                
+              </video>
+            
+          </div>
+        
 
         <div class="relative h-[1000px] flex flex-col items-center justify-center px-6 py-10 text-center">
           
@@ -752,6 +775,50 @@
 
 
 
+
+  <script>
+    (function () {
+      var overlay = document.getElementById("home-intro-overlay");
+      var threshold = parseInt((overlay && overlay.dataset.threshold) || "64", 10);
+      var revealMenu = ((overlay && overlay.dataset.revealMenu) || "true") === "true";
+      var completed = false;
+
+      function completeIntro() {
+        if (completed) return;
+        completed = true;
+
+        if (overlay) {
+          overlay.classList.add("is-hidden");
+        }
+
+        document.body.classList.remove("home-intro-active");
+        document.body.classList.add("home-intro-complete");
+        window.removeEventListener("scroll", onScroll);
+      }
+
+      function onScroll() {
+        if (window.scrollY >= threshold) {
+          completeIntro();
+        }
+      }
+
+      if (revealMenu) {
+        document.body.classList.add("home-intro-active");
+      }
+
+      if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        completeIntro();
+        return;
+      }
+
+      window.addEventListener("scroll", onScroll, { passive: true });
+      onScroll();
+
+      window.setTimeout(function () {
+        completeIntro();
+      }, 9000);
+    })();
+  </script>
 
 
   
