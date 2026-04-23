@@ -5,10 +5,16 @@
 {{ end }}
 {{- range $pages -}}
   {{- if and (not .Params.excludeFromSearch) (ne .Kind "taxonomy") (ne .Kind "term") -}}
-    {{- $section := .Site.GetPage "section" .Section -}}
+    {{- $sectionTitle := "" -}}
+    {{- with .CurrentSection -}}
+      {{- $sectionTitle = .Title | emojify | safeJS -}}
+    {{- end -}}
+    {{- if eq .Type "page" -}}
+      {{- $sectionTitle = "" -}}
+    {{- end -}}
     {{- $index = $index | append (dict
     "title" (.Title | emojify | safeJS)
-    "section" ($section.Title | emojify | safeJS)
+    "section" $sectionTitle
     "summary" (.Summary | plainify | htmlUnescape | safeJS)
     "content" (.Plain | safeJS)
     "permalink" .RelPermalink
