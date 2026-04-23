@@ -24,6 +24,12 @@ googleAnalytics = "G-Q08RDL11SR"
 [imaging]
   anchor = 'Center'
 
+[taxonomies]
+  tag = ""
+  category = ""
+  author = ""
+  series = "series"
+
 
 
 [sitemap]
