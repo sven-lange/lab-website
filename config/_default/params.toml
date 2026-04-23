@@ -84,7 +84,7 @@ forgejoDefaultServer = "https://v11.next.forgejo.org"
   disableHeroImageFilter = true # only used when layout equals hero
 
 [research]
-  bannerVideo = "img/CFAP36_TIRF_wild-type_line_2.mp4"
+  bannerVideo = "img/CFAP36_TIRF_wild-type_line_3-web-60fps.mp4"
   bannerVideoAutoplay = true
   bannerVideoMuted = true
   bannerVideoLoop = true
