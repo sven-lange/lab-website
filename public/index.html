@@ -204,14 +204,14 @@
   
   
     
-<link rel="apple-touch-icon" sizes="180x180" href="/lab/apple-touch-icon_b.png?v=20260423" media="(prefers-color-scheme: light)">
-<link rel="apple-touch-icon" sizes="180x180" href="/lab/apple-touch-icon_w.png?v=20260423" media="(prefers-color-scheme: dark)">
-<link rel="icon" type="image/png" sizes="32x32" href="/lab/favicon-32x32_b.png?v=20260423" media="(prefers-color-scheme: light)">
-<link rel="icon" type="image/png" sizes="32x32" href="/lab/favicon-32x32_w.png?v=20260423" media="(prefers-color-scheme: dark)">
-<link rel="icon" type="image/png" sizes="16x16" href="/lab/favicon-16x16_b.png?v=20260423" media="(prefers-color-scheme: light)">
-<link rel="icon" type="image/png" sizes="16x16" href="/lab/favicon-16x16_w.png?v=20260423" media="(prefers-color-scheme: dark)">
-<link rel="icon" type="image/png" sizes="32x32" href="/lab/favicon-32x32_b.png?v=20260423">
-<link rel="shortcut icon" href="/lab/favicon-32x32_b.png?v=20260423">
+<link rel="apple-touch-icon" sizes="180x180" href="/lab/apple-touch-icon_b.png?v=20260423-2" media="(prefers-color-scheme: light)">
+<link rel="apple-touch-icon" sizes="180x180" href="/lab/apple-touch-icon_w.png?v=20260423-2" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" sizes="32x32" href="/lab/favicon-32x32_b.png?v=20260423-2" media="(prefers-color-scheme: light)">
+<link rel="icon" type="image/png" sizes="32x32" href="/lab/favicon-32x32_w.png?v=20260423-2" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" sizes="16x16" href="/lab/favicon-16x16_b.png?v=20260423-2" media="(prefers-color-scheme: light)">
+<link rel="icon" type="image/png" sizes="16x16" href="/lab/favicon-16x16_w.png?v=20260423-2" media="(prefers-color-scheme: dark)">
+<link rel="icon" type="image/png" sizes="32x32" href="/lab/favicon-32x32_b.png?v=20260423-2">
+<link rel="shortcut icon" href="/lab/favicon-32x32_b.png?v=20260423-2">
 <link rel="manifest" href="/lab/site.webmanifest">
 
   
@@ -914,7 +914,9 @@
       function shouldUseMobileVideoMode() {
         var ua = navigator.userAgent || "";
         var isiOS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-        return isiOS;
+        var isSmallScreen = window.matchMedia && window.matchMedia("(max-width: 1024px)").matches;
+        var hasTouch = (navigator.maxTouchPoints || 0) > 0;
+        return isiOS || (isSmallScreen && hasTouch);
       }
 
       function activateMobileVideoMode() {

@@ -290,7 +290,9 @@
       function shouldUseMobileVideoMode() {
         var ua = navigator.userAgent || "";
         var isiOS = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-        return isiOS;
+        var isSmallScreen = window.matchMedia && window.matchMedia("(max-width: 1024px)").matches;
+        var hasTouch = (navigator.maxTouchPoints || 0) > 0;
+        return isiOS || (isSmallScreen && hasTouch);
       }
 
       function activateMobileVideoMode() {
