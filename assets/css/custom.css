@@ -137,10 +137,10 @@ body.home-intro-complete .main-menu {
 
 /* Easy tuning knobs for header/logo spacing and people headshots */
 :root {
-  --brand-icon-gap-mobile: 1.9rem;
-  --brand-icon-gap-desktop: 2.2rem;
-  --people-headshot-size-mobile: 3.5rem;
-  --people-headshot-size-desktop: 4rem;
+  --brand-icon-gap-mobile: 0.8rem;
+  --brand-icon-gap-desktop: 0.8rem;
+  --people-headshot-size-mobile: 10rem;
+  --people-headshot-size-desktop: 12rem;
 }
 
 .main-menu > div > a.brand-lockup {
