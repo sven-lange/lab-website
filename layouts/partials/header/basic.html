@@ -40,20 +40,20 @@
         {{ if $logoLightURL }}
           <img
             src="{{ $logoLightURL }}"
-            class="logo max-h-20 max-w-20 object-scale-down object-left nozoom dark:hidden"
+              class="logo h-8 w-8 object-scale-down object-left nozoom dark:hidden md:h-9 md:w-9"
             alt="">
         {{ end }}
         {{ if $logoDarkURL }}
           <img
             src="{{ $logoDarkURL }}"
-            class="logo max-h-20 max-w-20 object-scale-down object-left nozoom hidden dark:block"
+              class="logo hidden h-8 w-8 object-scale-down object-left nozoom dark:block md:h-9 md:w-9"
             alt="">
         {{ end }}
       {{ else if .Site.Params.Logo }}
         {{ $logo := resources.Get .Site.Params.Logo }}
         {{ if $logo }}
           {{ if eq $logo.MediaType.SubType "svg" }}
-            <span class="logo object-scale-down object-left nozoom">
+              <span class="logo h-8 w-8 object-scale-down object-left nozoom md:h-9 md:w-9">
               {{ $logo.Content | safeHTML }}
             </span>
           {{ else }}
@@ -61,7 +61,7 @@
               src="{{ $logo.RelPermalink }}"
               width="{{ div $logo.Width 2 }}"
               height="{{ div $logo.Height 2 }}"
-              class="logo max-h-20 max-w-20 object-scale-down object-left nozoom"
+                class="logo h-8 w-8 object-scale-down object-left nozoom md:h-9 md:w-9"
               alt="">
           {{ end }}
         {{ end }}
