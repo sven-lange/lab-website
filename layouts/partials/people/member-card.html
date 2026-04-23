@@ -16,9 +16,9 @@
         <img
           src="{{ $photoURL }}"
           alt="{{ .Title }} headshot"
-          class="people-member-photo h-10 w-10 rounded-full object-cover object-center sm:h-12 sm:w-12">
+          class="people-member-photo h-30 w-30 rounded-full object-cover object-center sm:h-12 sm:w-12">
       {{ else }}
-        <div class="people-member-photo people-member-photo-fallback flex h-10 w-10 items-center justify-center rounded-full sm:h-12 sm:w-12">
+        <div class="people-member-photo people-member-photo-fallback flex h-30 w-30 items-center justify-center rounded-full sm:h-12 sm:w-12">
           <span class="text-xl font-semibold">{{ slicestr .Title 0 1 }}</span>
         </div>
       {{ end }}
