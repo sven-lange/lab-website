@@ -1,0 +1,20 @@
+{{ define "main" }}
+  <header>
+    <h1 class="mt-5 text-4xl font-extrabold text-neutral-900 dark:text-neutral">{{ .Title }}</h1>
+  </header>
+
+  <section class="mt-0 prose flex max-w-full flex-col dark:prose-invert lg:flex-row mb-10">
+    <div class="min-w-0 min-h-0 max-w-prose w-full">
+      {{ .Content }}
+    </div>
+  </section>
+
+  {{ if gt (len .Pages) 0 }}
+    <section class="space-y-10 w-full">
+      {{ range .Pages.ByWeight }}
+        {{ partial "article-link/simple.html" . }}
+      {{ end }}
+    </section>
+    {{ partial "pagination.html" . }}
+  {{ end }}
+{{ end }}

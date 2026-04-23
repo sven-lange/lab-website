@@ -2,7 +2,7 @@
 title = "Mechanisms of Ubiquitin-Mediated Transport"
 date = '2026-04-16T18:10:00-04:00'
 draft = false
-description = "Mechanisms of Ubiquitin-Mediated Transport"
+description = "Lange Lab: Mechanisms of Ubiquitin-Mediated Transport"
 showAuthor = false
 showDate = false
 showReadingTime = false

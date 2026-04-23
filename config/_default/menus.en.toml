@@ -36,7 +36,7 @@
 	weight = 50
 
 [[main]]
-	name = "Open Positions"
+	name = "Join Us"
 	pageRef = "positions"
 	weight = 60
 
