@@ -16,10 +16,10 @@ featured = "/img/people/Lange_Sven.jpg"
   role = "Assistant Professor"
   email = "sven.lange {at} example.edu"
   links = [
-    { google-scholar = "https://scholar.google.com/" },
-    { orcid = "https://orcid.org/" },
-    { github = "https://github.com/" },
-    { bluesky = "https://bsky.app/" }
+  { google-scholar = "https://scholar.google.com/citations?user=xookvIMAAAAJ&hl=en&authuser=1" },
+  { orcid = "https://orcid.org/0000-0002-6011-8647" },
+  { github = "https://github.com/sven-lange" },
+  { bluesky = "https://bsky.app/profile/sven-m-lange.bsky.social" }
   ]
 +++
 
