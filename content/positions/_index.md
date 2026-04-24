@@ -11,15 +11,15 @@ showSummary = true
 
 Thank you for your interest in joining the lab.
 
-We are [always interested in motivated and talented people, even if there is currently no position advertised](). If interested, please send your CV/resume directly to {{< email email="smlange281@gmail.com" text="Dr Sven Lange" >}}.
+We are [always interested in motivated and talented people, even if there is currently no position advertised]().
 
 ### Graduate Students
 
-If you are a graduate student please reach out to Dr. Sven Lange directly.
+If you are a graduate student please reach out to {{< email email="smlange281@gmail.com" text="Dr Sven Lange" >}} directly.
 
 ### Postdoctoral Fellows
 
-Applicants must have a Ph.D. in cell biology, biochemistry, biophysics, or a related field and should send a cover letter and a CV to Dr. Sven Lange. In addition, two referees should email recommendation letters directly Dr. Lange.
+Applicants must have a Ph.D. in cell biology, biochemistry, biophysics, or a related field. Please send a cover letter, CV, and the contact information of two referees to {{< email email="smlange281@gmail.com" text="Dr Sven Lange" >}}.
 
 ### Current Openings
 
